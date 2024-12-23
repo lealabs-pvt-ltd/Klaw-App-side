@@ -1,0 +1,21 @@
+version: '3'
+
+services:
+  admin:
+    build:
+      context: ./admin  # Path to the admin directory
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    environment:
+      - DEBUG=1  # Set your environment variables as needed
+  
+  app:
+    build:
+      context: ./app  # Path to the app directory
+      dockerfile: Dockerfile
+    ports:
+      - "8001:8001"
+    environment:
+      - DEBUG=1  # Set your environment variables as needed
+
