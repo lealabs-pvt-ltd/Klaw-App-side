@@ -27,14 +27,18 @@ DEBUG = True
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
+
+# settings.py
 
 # settings.py
 from datetime import timedelta
-JWT_AUTH = {
-    'JWT_EXPIRATION_DELTA': timedelta(hours=1),  # Access token expiration time
-    'JWT_REFRESH_EXPIRATION_DELTA': timedelta(days=7),  # Refresh token expiration time
-    'JWT_AUTH_HEADER_PREFIX': 'Bearer',  # Header prefix for authorization
+
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': timedelta(days=365),
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=730),
+    'ROTATE_REFRESH_TOKENS': True,  # Optional: Rotate refresh tokens
+    'BLACKLIST_AFTER_ROTATION': True,  # Optional: Blacklist old refresh tokens
 }
 
 # Application definition
@@ -46,21 +50,23 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-    "mobile_api"
+    "mobile_api",
+    'corsheaders'
 ]
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
-    "django.middleware.csrf.CsrfViewMiddleware",
+    #"django.middleware.csrf.CsrfViewMiddleware",
+    'corsheaders.middleware.CorsMiddleware',
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
 
 ROOT_URLCONF = "klaw_mobile.urls"
-
+CORS_ALLOW_ALL_ORIGINS = True 
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
@@ -80,27 +86,24 @@ TEMPLATES = [
 WSGI_APPLICATION = "klaw_mobile.wsgi.application"
 
 
-# Database
-# https://docs.djangoproject.com/en/4.1/ref/settings/#databases
 
-# DATABASES = {
-#     "default": {
-#         "ENGINE": "django.db.backends.sqlite3",
-#         "NAME": BASE_DIR / "db.sqlite3",
-#     }
-# }
 
 DATABASES = {
     'default': {
         'ENGINE': 'djongo',  # Use Djongo as the engine
-        'NAME': 'klaw_db1',  # Your database name in MongoDB Atlas
+        'NAME': 'klaw_db_dev',  # Your database name
         'CLIENT': {
-            'host': 'mongodb+srv://igniteprojects02:igniteadmin@flaws.9pgqc.mongodb.net/flawsapp?retryWrites=true&w=majority&ssl=true&appName=klaw_app',  # Your MongoDB Atlas connection string
+            'host': 'mongodb://admin:developer2025@13.204.52.164:27017',  # Your MongoDB server connection string
             'retryWrites': True,
             'w': 'majority',
         },
     }
 }
+
+
+
+
+
 SESSION_ENGINE = 'django.contrib.sessions.backends.db'  # Default session engine
 
 # Password validation
@@ -153,3 +156,20 @@ REST_FRAMEWORK = {
     ),
 }
 AUTH_USER_MODEL = 'mobile_api.AppUser'
+
+CELERY_BROKER_URL = 'redis://localhost:6379/0'
+CELERY_ACCEPT_CONTENT = ['json']
+CELERY_TASK_SERIALIZER = 'json'
+TIME_ZONE = 'Asia/Kolkata'
+
+CACHES = {
+    'default': {
+        'BACKEND': 'django_redis.cache.RedisCache',
+        'LOCATION': 'redis://127.0.0.1:6379/1',
+        'OPTIONS': {
+            'CLIENT_CLASS': 'django_redis.client.DefaultClient',
+        }
+    }
+}
+
+APPEND_SLASH = True
