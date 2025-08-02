@@ -1,21 +1,11 @@
-version: '3'
-
 services:
-  admin:
-    build:
-      context: ./admin  # Path to the admin directory
-      dockerfile: Dockerfile
-    ports:
-      - "8000:8000"
-    environment:
-      - DEBUG=1  # Set your environment variables as needed
-  
   app:
-    build:
-      context: ./app  # Path to the app directory
-      dockerfile: Dockerfile
+    build: .
     ports:
-      - "8001:8001"
-    environment:
-      - DEBUG=1  # Set your environment variables as needed
-
+      - "8002:8000"  # External port 8002 -> internal 8000
+    volumes:
+      - .:/app
+    env_file:
+      - mobile_api/.env
+    command: ["/bin/bash", "./entrypoint.sh"]
+    restart: unless-stopped
